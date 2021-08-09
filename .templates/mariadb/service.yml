@@ -1,10 +1,11 @@
   mariadb:
-    image: linuxserver/mariadb
+    build: ./.templates/mariadb/.
     container_name: mariadb
     env_file:
       - ./services/mariadb/mariadb.env
     volumes:
       - ./volumes/mariadb/config:/config
+      - ./volumes/mariadb/db_backup:/backup
     ports:
       - "3306:3306"
     restart: unless-stopped
