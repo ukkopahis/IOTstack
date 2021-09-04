@@ -1,9 +1,16 @@
   telegraf:
     container_name: telegraf
-    image: telegraf
+    build: ./.templates/telegraf/.
     restart: unless-stopped
+    environment:
+      - TZ=Etc/UTC
+    ports:
+      - "8092:8092/udp"
+      - "8094:8094/tcp"
+      - "8125:8125/udp"
     volumes:
-      - ./services/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - ./volumes/telegraf/:/etc/telegraf
     depends_on:
       - influxdb
       - mosquitto
+
