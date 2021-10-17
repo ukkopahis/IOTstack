@@ -62,6 +62,7 @@ declare -A cont_array=(
 	[heimdall]="Heimdall Application Dashboard"
 	[dashmachine]="DashMachine"
 	[homer]="Homer"
+	[home_assistant]="Home Assistant Container"
 	# add yours here
 )
 
@@ -107,6 +108,7 @@ declare -a armhf_keys=(
 	"heimdall"
 	"dashmachine"
 	"homer"
+	"home_assistant"
 	# add yours here
 )
 sys_arch=$(uname -m)
