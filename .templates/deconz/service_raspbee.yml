@@ -1,5 +1,5 @@
   deconz:
-    image: marthoc/deconz
+    image: deconzcommunity/deconz
     container_name: deconz
     restart: unless-stopped
     ports:
@@ -7,7 +7,7 @@
       - '443:443'
       - '5901:5900'
     volumes:
-      - ./volumes/deconz/:/root/.local/share/dresden-elektronik/deCONZ
+      - ./volumes/deconz/:/opt/deCONZ
     devices:
       #RaspBee:
       - /dev/ttyAMA0
