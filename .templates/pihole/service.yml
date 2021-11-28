@@ -10,8 +10,8 @@
     env_file:
       - ./services/pihole/pihole.env
     volumes:
-       - ./volumes/pihole/etc-pihole/:/etc/pihole/
-       - ./volumes/pihole/etc-dnsmasq.d/:/etc/dnsmasq.d/
+       - ./volumes/pihole/etc-pihole:/etc/pihole
+       - ./volumes/pihole/etc-dnsmasq.d:/etc/dnsmasq.d
     dns:
       - 127.0.0.1
       - 1.1.1.1
