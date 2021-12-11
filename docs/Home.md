@@ -2,17 +2,17 @@
 
 The README is moving to the Wiki, It's easier to add content and example to the Wiki vs the README.md
 
-* [Getting Started](https://sensorsiot.github.io/IOTstack/Containers/Getting-Started)
-* [Updating the project](https://sensorsiot.github.io/IOTstack/Containers/Updating-the-Project)
-* [How the script works](https://sensorsiot.github.io/IOTstack/Containers/How-the-script-works)
-* [Understanding Containers](https://sensorsiot.github.io/IOTstack/Containers/Understanding-Containers)
+* [Getting Started](https://sensorsiot.github.io/IOTstack/Getting-Started)
+* [Updating the project](https://sensorsiot.github.io/IOTstack/Updating-the-Project)
+* [How the script works](https://sensorsiot.github.io/IOTstack/How-the-script-works)
+* [Understanding Containers](https://sensorsiot.github.io/IOTstack/Understanding-Containers)
 
 ***
 
 # Docker
 
-* [Commands](https://sensorsiot.github.io/IOTstack/Containers/Docker-commands)
-* [Docker Networks](https://sensorsiot.github.io/IOTstack/Containers/Networking)
+* [Commands](https://sensorsiot.github.io/IOTstack/Docker-commands)
+* [Docker Networks](https://sensorsiot.github.io/IOTstack/Networking)
 
 ***
 
@@ -48,28 +48,28 @@ The README is moving to the Wiki, It's easier to add content and example to the 
 
 # Native installs
 
-* [RTL_433](https://sensorsiot.github.io/IOTstack/Containers/Native-RTL_433)
-* [RPIEasy](https://sensorsiot.github.io/IOTstack/Containers/RPIEasy_native)
+* [RTL_433](https://sensorsiot.github.io/IOTstack/Native-RTL_433)
+* [RPIEasy](https://sensorsiot.github.io/IOTstack/RPIEasy_native)
 
 ***
 
 # Backups
 
-* [Docker backups](https://sensorsiot.github.io/IOTstack/Containers/Backups)
+* [Docker backups](https://sensorsiot.github.io/IOTstack/Backup-and-Restore)
 * Recovery (coming soon)
 ***
 
 # Remote Access
 
-* [VPN and Dynamic DNS](https://sensorsiot.github.io/IOTstack/Containers/Accessing-your-Device-from-the-internet)
+* [VPN and Dynamic DNS](https://sensorsiot.github.io/IOTstack/Accessing-your-Device-from-the-internet)
 * [x2go](https://sensorsiot.github.io/IOTstack/Containers/x2go)
 
 ***
 
 # Miscellaneous 
 
-* [log2ram](https://sensorsiot.github.io/IOTstack/Containers/Misc)
-* [Dropbox-Uploader](https://sensorsiot.github.io/IOTstack/Containers/Misc)
+* [log2ram](https://sensorsiot.github.io/IOTstack/Misc)
+* [Dropbox-Uploader](https://sensorsiot.github.io/IOTstack/Misc)
 
 ***
 
