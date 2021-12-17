@@ -1,8 +1,20 @@
 # Updating the project
-**If you ran the git checkout -- 'git ls-files -m' as suggested in the old wiki entry then please check your duck.sh because it removed your domain and token**
-
 
 Periodically updates are made to project which include new or modified container template, changes to backups or additional features. As these are released your local copy of this project will become out of date. This section deals with how to bring your project to the latest published state.
+
+Quick instructions:
+
+1. backup your current settings: `cp docker-compose.yml docker-compose.yml.bak`
+2. check `git status` for any local changes you may have made to project files. Save and preserve your changes by doing a commit: `git commit -a -m "local customization"`. Or revert them using: `git checkout -- path/to/changed_file`.
+3. update project files from github: `git pull origin master -r`
+4. get latest images from the web: `docker pull`
+5. rebuild localy created images from new Dockerfiles: `docker-compose build --pull`
+6. update containers to latest: `docker-compose up --build -d`
+7. **optional**, needed if something won't start after the rest of the steps - to update docker-compose.yml with new definitions for a container: open `./menu.sh`, select Build Stack, unselect and then reselect the container causing the issue, and then build by presing enter. Check if this fixed your issue: `docker-compose up -d`
+
+## Details, partly outdated
+
+**If you ran the git checkout -- 'git ls-files -m' as suggested in the old wiki entry then please check your duck.sh because it removed your domain and token**
 
 Git offers build in functionality to fetch the latest changes.
 
