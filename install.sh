@@ -313,5 +313,10 @@ if [ ! "$(user_in_group docker)" == "true" ]; then
 	echo "You will need to restart your system before the changes take effect."
 	sudo usermod -G "docker" -a $USER
 fi
+if [ ! -e /dev/ttyUSB0 ]; then
+    echo "Creating static /dev/ttyUSB0 device for ESPhome"
+    sudo mknod -m660 /dev/ttyUSB0 c 188 0
+    sudo chgrp dialout /dev/ttyUSB0
+fi
 do_env_checks
 do_kernel_checks
