@@ -1,0 +1,14 @@
+[Unit]
+Description=Create /dev/ttyUSB0 for ESPHome
+ConditionPathExists=!/dev/ttyUSB0
+Before=docker.service
+After=systemd-udevd.service
+
+[Service]
+Type=oneshot
+TimeoutSec=5
+ExecStart=mknod -m660 /dev/ttyUSB0 c 188 0
+ExecStartPost=chgrp dialout /dev/ttyUSB0
+
+[Install]
+WantedBy=multi-user.target

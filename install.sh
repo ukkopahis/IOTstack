@@ -314,9 +314,8 @@ if [ ! "$(user_in_group docker)" == "true" ]; then
 	sudo usermod -G "docker" -a $USER
 fi
 if [ ! -e /dev/ttyUSB0 ]; then
-    echo "Creating static /dev/ttyUSB0 device for ESPhome"
-    sudo mknod -m660 /dev/ttyUSB0 c 188 0
-    sudo chgrp dialout /dev/ttyUSB0
+    echo "Adding service to create /dev/ttyUSB0 for ESPhome"
+    .templates/esphome/create-systemd-ttyUSB0-service.sh
 fi
 do_env_checks
 do_kernel_checks

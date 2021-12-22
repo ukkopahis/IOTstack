@@ -254,13 +254,13 @@ function do_env_setup() {
 
 function do_ttyUSB0_checks() {
     [ -e /dev/ttyUSB0 ] && return
-    echo "/dev/ttyUSB0 not created, needed for esphome" >&2
-    [ -f .ttyusb0_notcreated ] && return
+    if [ -f .ttyusb0_notcreated ]; then
+        echo "WARNING: /dev/ttyUSB0 not created, needed for esphome" >&2
+        return
+    fi
 
-    if (whiptail --title "/dev/ttyUSB0" --yesno "/dev/ttyUSB0 not created, and is required to run ESPHome.\nWould you like to create it now?\n\nYou will not be prompted again." 20 78); then
-        echo "Creating static /dev/ttyUSB0 device for ESPHome"
-        sudo mknod -m660 /dev/ttyUSB0 c 188 0
-        sudo chgrp dialout /dev/ttyUSB0
+    if (whiptail --title "/dev/ttyUSB0" --yesno "/dev/ttyUSB0 not created, and is required to run ESPHome.\nIt needs to be recreated after every bootup.\nWould you like to add a service to create it?\n\nYou will not be prompted again." 20 78); then
+        .templates/esphome/create-systemd-ttyUSB0-service.sh
     else
         touch .ttyusb0_notcreated
     fi
