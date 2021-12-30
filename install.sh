@@ -313,7 +313,10 @@ if [ ! "$(user_in_group docker)" == "true" ]; then
 	echo "You will need to restart your system before the changes take effect."
 	sudo usermod -G "docker" -a $USER
 fi
-if [ ! -e /dev/ttyUSB0 ]; then
+systemctl-exists() {
+  [ $(systemctl list-unit-files "${1}*" | wc -l) -gt 3 ]
+}
+if ! systemctl-exists create_dev_ttyUSB0; then
     echo "Adding service to create /dev/ttyUSB0 for ESPhome"
     .templates/esphome/create-systemd-ttyUSB0-service.sh
 fi

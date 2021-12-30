@@ -13,11 +13,11 @@ found and changed in your `docker-compose.yml`.
 To support flashing an ESP device directly from your RPi, `/dev/ttyUSB0` is made
 available to the container. This file usually auto-created when an
 USB-to-serial-converter is plugged in. Docker needs the file to exist when the
-container is started. This is usually handled by install.sh and menu.sh. But
-just in case this somehow fails (e.g. RPi already connected when said scripts
-are executed), just run:
+container is started, even if an ESP is not plugged in at that time. Files in
+created in /dev aren't persisted upon reboot. Thus a service is needed to create
+it at startup. This service is usually added by install.sh or menu.sh. If it
+somehow missing, just add the service manually:
 
 ```
-sudo mknod -m660 /dev/ttyUSB0 c 188 0
-sudo chgrp dialout /dev/ttyUSB0
+bash .templates/esphome/create-systemd-ttyUSB0-service.sh
 ```
