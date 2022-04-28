@@ -1,4 +1,5 @@
 #!/bin/bash
+# vim: noexpandtab
 
 CURRENT_BRANCH=$(git name-rev --name-only HEAD)
 
@@ -14,9 +15,6 @@ VGET_CMD="$PYTHON_CMD ./scripts/python_deps_check.py"
 
 sys_arch=$(uname -m)
 
-# ----------------------------------------------
-# Helper functions
-# ----------------------------------------------
 function command_exists() {
 	command -v "$@" > /dev/null 2>&1
 }
@@ -359,13 +357,7 @@ function do_env_checks() {
 	fi
 }
 
-# ----------------------------------------------
-# Menu bootstrap entry point
-# ----------------------------------------------
-
-if [[ "$*" == *"--no-check"* ]]; then
-	echo "Skipping preflight checks."
-else
+function do_checks() {
 	do_project_checks
 	do_env_checks
 	do_python3_checks
@@ -384,14 +376,27 @@ else
 		echo "  rm .docker_notinstalled || rm .docker_outofdate || rm .project_outofdate"
 		echo ""
 	fi
-fi
+}
+
+function do_help() {
+	echo "USAGE:
+	$0 [OPTIONS...]"
+	echo $'OPTIONS:
+	--branch <name>     override branch to check for updates
+	                    (default: current branch)
+	--no-check          don\'t run any environment or git checks
+	--run-env-setup     try to make required user&group changes
+	--encoding <enc>    set encoding for menu'
+}
 
 while test $# -gt 0
 do
 	case "$1" in
 		--branch) CURRENT_BRANCH=${2:-$(git name-rev --name-only HEAD)}
 			;;
-		--no-check) echo ""
+		--no-check)
+			NO_CHECKS=true
+			echo "Skipping preflight checks."
 			;;
 		--run-env-setup) # Sudo cannot be run from inside functions.
 				echo "Setting up environment:"
@@ -411,11 +416,22 @@ do
 			;;
 		--encoding) ENCODING_TYPE=$2
 			;;
-		--*) echo "bad option $1"
+		--help)
+			do_help
+			exit 1
+			;;
+		--*)
+			echo "ERROR: unknown option: $1"
+			do_help
+			exit 1
 			;;
 	esac
 	shift
 done
+
+if [[ -z "$NO_CHECKS" ]]; then
+	do_checks
+fi
 
 # This section is temporary, it's just for notifying people of potential breaking changes.
 if [[ -f .new_install ]]; then
