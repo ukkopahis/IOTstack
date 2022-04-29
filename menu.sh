@@ -378,6 +378,23 @@ function do_checks() {
 	fi
 }
 
+function do_dotenv_defaults() {
+	ENV_FILE=.env
+	echo "Checking $ENV_FILE is setting IOTSTACK_UID and IOTSTACK_GID"
+	grep -qs '^IOTSTACK_UID=' $ENV_FILE || {
+		echo Adding missing definitions to $ENV_FILE using UID:GID=$(id --user):$(id --group)
+		cat >> $ENV_FILE <<- EOF
+		# Changing IOTSTACK_UID or IOTSTACK_GID after you have started the stack is not
+		# supported. File owners in the 'volumes'-folder won't automatically update to
+		# match, resulting in various problems. i.e. Do NOT change the next two lines.
+		IOTSTACK_UID=$(id --user)
+		EOF
+	}
+	grep -qs '^IOTSTACK_GID=' $ENV_FILE || {
+		echo "IOTSTACK_GID=$(id --group)" >> $ENV_FILE
+	}
+}
+
 function do_help() {
 	echo "USAGE:
 	$0 [OPTIONS...]"
@@ -432,6 +449,8 @@ done
 if [[ -z "$NO_CHECKS" ]]; then
 	do_checks
 fi
+
+do_dotenv_defaults
 
 # This section is temporary, it's just for notifying people of potential breaking changes.
 if [[ -f .new_install ]]; then
