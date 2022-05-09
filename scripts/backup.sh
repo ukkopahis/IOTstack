@@ -106,7 +106,7 @@ sudo tar -czf $TMPBACKUPFILE -T $BACKUPLIST >> $LOGFILE 2>&1
 
 [ -f "$ROLLING" ] && ROLLINGOVERWRITTEN=1 && rm -rf $ROLLING
 
-sudo chown -R $USER:$USER $TMPDIR/backup* >> $LOGFILE 2>&1
+sudo chown -R $USER:$(id -g $USER) $TMPDIR/backup* >> $LOGFILE 2>&1
 
 if [[ "$BACKUPTYPE" -eq "1" || "$BACKUPTYPE" -eq "3" ]]; then
   cp $TMPBACKUPFILE $BACKUPFILE
