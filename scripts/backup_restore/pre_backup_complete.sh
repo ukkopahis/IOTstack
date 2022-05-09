@@ -2,7 +2,7 @@
 
 # This script runs any prebackup commands you may need
 
-docker-compose down
+docker-compose stop
 
 if [ -f "./pre_backup.sh" ]; then
   echo "./pre_backup.sh file found, executing:"
