@@ -1,4 +1,5 @@
 #!/bin/bash
+# vim: sw=2
 
 # Usage:
 # ./scripts/restore.sh [FILENAME=backup.tar.gz] {noask}
@@ -14,10 +15,14 @@
 #     Will restore from the backup file "./backups/some_other_backup.tar.gz" and will not warn that data will be deleted.
 #
 
-if [ -d "./menu.sh" ]; then
-  echo "./menu.sh file was not found. Ensure that you are running this from IOTstack's directory."
-  exit 1
+if [[ "$EUID" != 0 ]]; then
+  # re-run as root in order to be able to restore owners correctly
+  sudo ${BASH_SOURCE[0]} "$@"
+  exit $?
 fi
+
+# Allow running from everywhere, but change folder to script's IOTstack
+cd "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
 
 echo "Restoring from a backup will erase all existing data."
 read -p "Continue [y/N]? " -n 1 -r PROCEED_WITH_RESTORE
@@ -84,5 +89,7 @@ echo "" >> $LOGFILE
 echo "" >> $LOGFILE
 echo "### End of log ###" >> $LOGFILE
 echo "" >> $LOGFILE
+
+chmod a+r $LOGFILE
 
 cat $LOGFILE
