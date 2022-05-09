@@ -27,17 +27,12 @@ if [[ ! $PROCEED_WITH_RESTORE =~ ^[Yy]$ ]]; then
   exit 0
 fi
 
-RESTOREFILENAME="backup.tar.gz"
-RESTOREFILENAME=${1:-$RESTOREFILENAME}
+RESTOREFILENAME=${1:-"backup.tar.gz"}
 
 BASEDIR=./backups
-TMPDIR=./.tmp
-BASERESTOREFILE="$(date +"%Y-%m-%d_%H%M")"
 RESTOREFILE="$BASEDIR/$RESTOREFILENAME"
-LOGFILE="$BASEDIR/logs/restore_$BASERESTOREFILE.log"
-BACKUPFILE="$BASEDIR/backup/backup_$BASERESTOREFILE.tar.gz"
+LOGFILE="$BASEDIR/logs/restore_$(date +"%Y-%m-%d_%H%M").log"
 
-[ -d ./backups ] || mkdir -p ./backups
 [ -d ./backups/logs ] || mkdir -p ./backups/logs
 
 [ -d ./.tmp ] || sudo rm -rf ./.tmp
@@ -69,7 +64,6 @@ sudo rm -rf ./extra/ >> $LOGFILE 2>&1
 sudo rm -rf ./postbuild.sh >> $LOGFILE 2>&1
 sudo rm -rf ./pre_backup.sh >> $LOGFILE 2>&1
 sudo rm -rf ./post_backup.sh >> $LOGFILE 2>&1
-sudo rm -rf ./post_restore.sh >> $LOGFILE 2>&1
 sudo rm -rf ./post_restore.sh >> $LOGFILE 2>&1
 
 sudo tar -zxvf \
