@@ -83,9 +83,14 @@ fi
 
 echo "" >> $BACKUPLIST
 
-echo "" >> $LOGFILE
-echo "Executing prebackup scripts" >> $LOGFILE
-bash ./scripts/backup_restore/pre_backup_complete.sh >> $LOGFILE 2>&1
+echo "Stopping stack to get consistent database backups" >> $LOGFILE
+docker-compose stop >> $LOGFILE
+
+if [ -f "./pre_backup.sh" ]; then
+  echo "" >> $LOGFILE
+  echo "./pre_backup.sh file found, executing:" >> $LOGFILE
+  bash ./pre_backup.sh >> $LOGFILE 2>&1
+fi
 
 echo "./services/" >> $BACKUPLIST
 echo "./volumes/" >> $BACKUPLIST
@@ -121,9 +126,14 @@ fi
 echo "Backup Size (bytes): $(stat --printf="%s" $TMPBACKUPFILE)" >> $LOGFILE
 echo "" >> $LOGFILE
 
-echo "Executing postbackup scripts" >> $LOGFILE
-bash ./scripts/backup_restore/post_backup_complete.sh >> $LOGFILE 2>&1
-echo "" >> $LOGFILE
+if [ -f "./post_backup.sh" ]; then
+  echo "./post_backup.sh file found, executing:" >> $LOGFILE
+  bash ./post_backup.sh 2>&1 >> $LOGFILE
+  echo "" > $LOGFILE
+fi
+
+echo "Starting stack back up" >> $LOGFILE
+docker-compose start
 
 echo "Finished At: $(date +"%Y-%m-%dT%H-%M-%S")" >> $LOGFILE
 echo "" >> $LOGFILE

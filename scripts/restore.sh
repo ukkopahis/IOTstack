@@ -77,9 +77,12 @@ sudo tar -zxvf \
 
 echo "" >> $LOGFILE
 
-echo "Executing post restore scripts" >> $LOGFILE
-bash ./scripts/backup_restore/post_restore_complete.sh >> $LOGFILE 2>&1
-echo "" > $LOGFILE
+
+if [ -f "./post_restore.sh" ]; then
+  echo "./post_restore.sh file found, executing:" >> $LOGFILE
+  bash ./post_restore.sh 2>&1 >> $LOGFILE
+  echo "" > $LOGFILE
+fi
 
 echo "Finished At: $(date +"%Y-%m-%dT%H-%M-%S")" >> $LOGFILE
 echo "" >> $LOGFILE
