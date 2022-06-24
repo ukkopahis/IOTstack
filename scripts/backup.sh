@@ -98,6 +98,8 @@ fi
 echo "./services/" >> $BACKUPLIST
 echo "./volumes/" >> $BACKUPLIST
 [ -f "./docker-compose.yml" ] && echo "./docker-compose.yml" >> $BACKUPLIST
+[ -f "./docker-compose.override.yml" ] && echo "./docker-compose.override.yml" >> $BACKUPLIST
+[ -f "./.env" ] && echo "./.env" >> $BACKUPLIST
 [ -f "./compose-override.yml" ] && echo "./compose-override.yml" >> $BACKUPLIST
 [ -f "./extra" ] && echo "./extra" >> $BACKUPLIST
 [ -f "./.tmp/databases_backup" ] && echo "./.tmp/databases_backup" >> $BACKUPLIST
