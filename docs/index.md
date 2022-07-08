@@ -19,6 +19,7 @@ Welcome to IOTstack:
   </label>
 
 * If you are just getting started with IOTstack, see [Getting Started](Basic_setup/index.md).
+    * For latest changes, see [Changelog](Updates/Changelog.md).
     * If you're running gcgarner/IOTstack see [Migrating to SensorsIot](Updates/gcgarner-migration.md).
 
 * You're always welcome to ask questions on the [IOTStack Discord](https://discord.gg/ZpKHnks).
@@ -28,3 +29,16 @@ Welcome to IOTstack:
 !!! cite inline end "Full site page listing"
 
     {nav}
+
+## introduction to IOTstack - videos
+
+These are from 2019 and 2020. Though IOTstack has changed a bit, they are still
+a great introduction.
+
+Andreas Spiess Video #295: Raspberry Pi Server based on Docker, with VPN, Dropbox backup, Influx, Grafana, etc: IOTstack
+
+[![#295 Raspberry Pi Server based on Docker, with VPN, Dropbox backup, Influx, Grafana, etc: IOTstack](http://img.youtube.com/vi/a6mjt8tWUws/0.jpg)](https://www.youtube.com/watch?v=a6mjt8tWUws)
+
+Andreas Spiess Video #352: Raspberry Pi4 Home Automation Server (incl. Docker, OpenHAB, HASSIO, NextCloud)
+
+[![#352 Raspberry Pi4 Home Automation Server (incl. Docker, OpenHAB, HASSIO, NextCloud)](http://img.youtube.com/vi/KJRMjUzlHI8/0.jpg)](https://www.youtube.com/watch?v=KJRMjUzlHI8)

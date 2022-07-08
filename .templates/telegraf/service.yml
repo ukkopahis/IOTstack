@@ -1,6 +1,7 @@
 telegraf:
   container_name: telegraf
   build: ./.templates/telegraf/.
+  hostname: iotstack # optional
   restart: unless-stopped
   environment:
     - TZ=Etc/UTC
@@ -13,5 +14,4 @@ telegraf:
     - /var/run/docker.sock:/var/run/docker.sock:ro
   depends_on:
     - influxdb
-    - mosquitto
 

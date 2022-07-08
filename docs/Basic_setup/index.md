@@ -1,25 +1,17 @@
 # Getting Started
 
-## introduction to IOTstack - videos
-
-Andreas Spiess Video #295: Raspberry Pi Server based on Docker, with VPN, Dropbox backup, Influx, Grafana, etc: IOTstack
-
-[![#295 Raspberry Pi Server based on Docker, with VPN, Dropbox backup, Influx, Grafana, etc: IOTstack](http://img.youtube.com/vi/a6mjt8tWUws/0.jpg)](https://www.youtube.com/watch?v=a6mjt8tWUws)
-
-Andreas Spiess Video #352: Raspberry Pi4 Home Automation Server (incl. Docker, OpenHAB, HASSIO, NextCloud)
-
-[![#352 Raspberry Pi4 Home Automation Server (incl. Docker, OpenHAB, HASSIO, NextCloud)](http://img.youtube.com/vi/KJRMjUzlHI8/0.jpg)](https://www.youtube.com/watch?v=KJRMjUzlHI8)
-
-## Assumptions
+## Requirements
 
 IOTstack makes the following assumptions:
 
 1. Your hardware is a Raspberry Pi (typically a 3B+ or 4B).
 
 	* The Raspberry Pi Zero W2 has been tested with IOTstack. It works but the 512MB RAM means you should not try to run too many containers concurrently.
-    * Users have also [reported success
-      ](https://github.com/SensorsIot/IOTstack/issues/375) on Orange Pi
+	* Users have also [reported success](
+	  https://github.com/SensorsIot/IOTstack/issues/375) on Orange Pi
       Win/Plus.
+	* Most services will run on any Linux machine with Docker, but some have
+	  Raspberry Pi specific default configurations or dependencies.
 
 2. Your Raspberry Pi has a reasonably-recent version of 32-bit or 64-bit Raspberry Pi OS (aka "Raspbian") installed. You can download operating-system images:
 
@@ -28,21 +20,31 @@ IOTstack makes the following assumptions:
 	* [Prior releases](http://downloads.raspberrypi.org/raspios_armhf/images/)
       : This offers only "Raspberry Pi OS with desktop" images.
 
-3. Your operating system has been updated:
+3. You've done a "default" Raspberry Pi OS install, which automatically
+   satisfies:
+
+    - you log in as a regular user, not root. The actual username and its
+      numeric uid doesn't matter.
+    - this user has `sudo`-access, usually this is done by belonging to the
+      *sudo*-group.
+    - boot partition is mounted at `/boot`.
+
+4. Your operating system has been updated:
 
 	``` console
 	$ sudo apt update
 	$ sudo apt upgrade -y
 	```
 
-4. You are logged-in as the user "pi".
-5. User "pi" has the user ID 1000.
-6. The home directory for user "pi" is `/home/pi/`.
-7. IOTstack is installed at `/home/pi/IOTstack` (with that exact spelling).
+For brevity, this documentation also makes some guesses, but these aren't
+technical requirements. If you have a different choice, you'll just have to
+adjust the commands presented in these instructions to match the change. For
+first-time Linux users it's recommended to start with these:
 
-If the first three assumptions hold, assumptions four through six are Raspberry Pi defaults on a clean installation. The seventh is what you get if you follow these instructions faithfully.
-
-Please don't read these assumptions as saying that IOTstack will not run on other hardware, other operating systems, or as a different user. It is just that IOTstack gets most of its testing under these conditions. The further you get from these implicit assumptions, the more your mileage may vary.
+- You are logged-in as the user "pi".
+- The home directory for user "pi" is `/home/pi/`.
+- IOTstack is installed at `~/IOTstack` (with that exact spelling).
+- The system hostname is `raspberrypi`
 
 ## New installation
 
@@ -748,49 +750,3 @@ To pin an image to a specific version:
 	$ docker-compose up -d --build mosquitto
 	```
 
-## the nuclear option - use with caution
-
-If you create a mess and can't see how to recover, try proceeding like this:
-
-``` console
-$ cd ~/IOTstack
-$ docker-compose down
-$ cd
-$ mv IOTstack IOTstack.old
-$ git clone https://github.com/SensorsIot/IOTstack.git IOTstack
-```
-
-In words:
-
-1. Be in the right directory.
-2. Take the stack down.
-3. The `cd` command without any arguments changes your working directory to your home directory (variously known as `~` or `$HOME` or `/home/pi`).
-4. Move your existing IOTstack directory out of the way. If you get a permissions problem:
-
-	* Re-try the command with `sudo`; and
-	* Read [a word about the `sudo` command](#a-word-about-the-sudo-command). Needing `sudo` in this situation is an example of over-using `sudo`.
-
-5. Check out a clean copy of IOTstack.
-
-Now, you have a clean slate. You can either start afresh by running the menu:
-
-``` console
-$ cd ~/IOTstack
-$ ./menu.sh
-```
-
-Alternatively, you can mix and match by making selective copies from the old directory. For example:
-
-``` console
-$ cd
-$ cp IOTstack.old/docker-compose.yml IOTstack/
-```
-
-The `IOTstack.old` directory remains available as a reference for as long as you need it. Once you have no further use for it, you can clean it up via:
-
-``` console
-$ cd
-$ sudo rm -rf ./IOTstack.old
-```
-
-The `sudo` command is needed in this situation because some files and folders (eg the "volumes" directory and most of its contents) are owned by root.

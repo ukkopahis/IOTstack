@@ -41,8 +41,8 @@ wireguard:
   image: ghcr.io/linuxserver/wireguard
   restart: unless-stopped
   environment:
-  - PUID=1000
-  - PGID=1000
+  - PUID=${IOTSTACK_UID:?IOTSTACK_UID must be defined in ~/IOTstack/.env}
+  - PGID=${IOTSTACK_GID:?IOTSTACK_GID must be defined in ~/IOTstack/.env}
   - TZ=Etc/UTC
   - SERVERURL=your.dynamic.dns.name
   - SERVERPORT=51820
@@ -112,7 +112,8 @@ You have several options for how your remote peers resolve DNS requests:
 	    
 	* The default value of `auto` instructs the WireGuard *service* running within the WireGuard *container* to use a DNS-service, coredns, also running in the Wireguard container. Coredns by default directs queries to 127.0.0.11, which Docker intercepts and forwards to whichever resolvers are specified in the Raspberry Pi's `/etc/resolv.conf`.
 
-* `PEERDNS=auto` with `custom-cont-init` { #customContInit }
+* `PEERDNS=auto` with `custom-cont-init`
+    { #customContInit }
 
 	This configuration instructs WireGuard to forward DNS queries from remote peers to any host daemon or **container** which is listening on port 53. This is the option you will want to choose if you are running an ad-blocking DNS server (eg *PiHole* or *AdGuardHome*) in a container on the same host as WireGuard, and you want your remote clients to obtain DNS resolution via the ad-blocker, but don't want your Raspberry Pi host to use it.
 
@@ -247,8 +248,8 @@ You will need to create the `compose-override.yml` **before** running the menu t
 	services:
 	  wireguard:
 	    environment:
-	    - PUID=1000
-	    - PGID=1000
+	    - PUID=${IOTSTACK_UID:?IOTSTACK_UID must be defined in ~/IOTstack/.env}
+	    - PGID=${IOTSTACK_GID:?IOTSTACK_GID must be defined in ~/IOTstack/.env}
 	    - TZ=Australia/Sydney
 	    - SERVERURL=downunda.duckdns.org
 	    - SERVERPORT=51820

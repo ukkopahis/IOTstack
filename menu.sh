@@ -1,22 +1,18 @@
 #!/bin/bash
+# vim: noexpandtab
 
+# go to the absolute path of menu.sh
+cd "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CURRENT_BRANCH=$(git name-rev --name-only HEAD)
 
 # Minimum Software Versions
 REQ_DOCKER_VERSION=18.2.0
 REQ_PYTHON_VERSION=3.6.9
-REQ_PIP_VERSION=3.6.9
-REQ_PYAML_VERSION=0.16.12
-REQ_BLESSED_VERSION=1.17.5
 
 PYTHON_CMD=python3
-VGET_CMD="$PYTHON_CMD ./scripts/python_deps_check.py"
 
 sys_arch=$(uname -m)
 
-# ----------------------------------------------
-# Helper functions
-# ----------------------------------------------
 function command_exists() {
 	command -v "$@" > /dev/null 2>&1
 }
@@ -137,22 +133,14 @@ function check_git_updates()
 }
 function install_python3_and_deps() {
 	CURR_PYTHON_VER="${1:-Unknown}"
-	CURR_PYAML_VER="${2:-Unknown}"
-	if (whiptail --title "Python 3 and Dependencies" --yesno "Python 3.6.9 or later (Current = $CURR_PYTHON_VER), ruamel.yaml 0.16.12 or later (Current = $CURR_PYAML_VER), blessed and pip3 are required for IOTstack to function correctly. Install these now?" 20 78); then
+	CURR_VIRTUALENV="${2:-Unknown}"
+	if (whiptail --title "Python 3 and virtualenv" --yesno "Python 3.6.9 or later (Current = $CURR_PYTHON_VER) and virtualenv (Installed = $CURR_VIRTUALENV) are required for IOTstack to function correctly. Install these now?" 20 78); then
 		sudo apt update
-		sudo apt install -y python3-pip python3-dev
+		sudo apt install -y python3-dev python3-virtualenv
 		if [ $? -eq 0 ]; then
 			PYTHON_VERSION_GOOD="true"
 		else
-			echo "Failed to install Python" >&2
-			exit 1
-		fi
-		pip3 install -U ruamel.yaml==0.16.12 blessed
-		if [ $? -eq 0 ]; then
-			PYAML_VERSION_GOOD="true"
-			BLESSED_GOOD="true"
-		else
-			echo "Failed to install ruamel.yaml and Blessed" >&2
+			echo "Failed to install Python and virtualenv" >&2
 			exit 1
 		fi
 	fi
@@ -172,61 +160,25 @@ function update_project() {
 }
 
 function do_python3_checks() {
+	VIRTUALENV_GOOD="false"
+	if command_exists virtualenv; then
+		VIRTUALENV_GOOD="true"
+		echo "Python virtualenv found." >&2
+	fi
 	PYTHON_VERSION_GOOD="false"
-	PYAML_VERSION_GOOD="false"
-	BLESSED_GOOD="false"
-
-	if command_exists $PYTHON_CMD && command_exists pip3; then
+	if command_exists $PYTHON_CMD; then
 		PYTHON_VERSION=$($PYTHON_CMD --version 2>/dev/null)
 		PYTHON_VERSION_MAJOR=$(echo "$PYTHON_VERSION"| cut -d' ' -f 2 | cut -d' ' -f 2 | cut -d'.' -f 1)
 		PYTHON_VERSION_MINOR=$(echo "$PYTHON_VERSION"| cut -d' ' -f 2 | cut -d'.' -f 2)
 		PYTHON_VERSION_BUILD=$(echo "$PYTHON_VERSION"| cut -d' ' -f 2 | cut -d'.' -f 3)
 
-		PYAML_VERSION=$($VGET_CMD --pyaml-version 2>/dev/null)
-		PYAML_VERSION="${PYAML_VERSION:-Unknown}"
-		PYAML_VERSION_MAJOR=$(echo "$PYAML_VERSION"| cut -d' ' -f 2 | cut -d'.' -f 1)
-		PYAML_VERSION_MINOR=$(echo "$PYAML_VERSION"| cut -d' ' -f 2 | cut -d'.' -f 2)
-		PYAML_VERSION_BUILD=$(echo "$PYAML_VERSION"| cut -d' ' -f 2 |cut -d'.' -f 3)
-
-		BLESSED_VERSION=$($VGET_CMD --blessed-version 2>/dev/null)
-		BLESSED_VERSION="${BLESSED_VERSION:-Unknown}"
-		BLESSED_VERSION_MAJOR=$(echo "$BLESSED_VERSION"| cut -d' ' -f 2 | cut -d'.' -f 1)
-		BLESSED_VERSION_MINOR=$(echo "$BLESSED_VERSION"| cut -d' ' -f 2 | cut -d'.' -f 2)
-		BLESSED_VERSION_BUILD=$(echo "$BLESSED_VERSION"| cut -d' ' -f 2 | cut -d'.' -f 3)
-
 		printf "Python Version: '${PYTHON_VERSION:-Unknown}'. "
-		if [ "$(minimum_version_check $REQ_PYTHON_VERSION $PYTHON_VERSION_MAJOR $PYTHON_VERSION_MINOR $PYTHON_VERSION_BUILD)" == "true" ]; then
+		if [ "$(minimum_version_check $REQ_PYTHON_VERSION $PYTHON_VERSION_MAJOR $PYTHON_VERSION_MINOR $PYTHON_VERSION_BUILD)" == "true" -a "$VIRTUALENV_GOOD" == "true" ]; then
 			PYTHON_VERSION_GOOD="true"
-			echo "Python is up to date." >&2
+			echo "Python and virtualenv is up to date." >&2
 		else
-			echo "Python is outdated." >&2
-			install_python3_and_deps "$PYTHON_VERSION_MAJOR.$PYTHON_VERSION_MINOR.$PYTHON_VERSION_BUILD" "$PYAML_VERSION_MAJOR.$PYAML_VERSION_MINOR.$PYAML_VERSION_BUILD"
-			return 1
-		fi
-		printf "ruamel.yaml Version: '$PYAML_VERSION'. "
-		if [ "$(minimum_version_check $REQ_PYAML_VERSION $PYAML_VERSION_MAJOR $PYAML_VERSION_MINOR $PYAML_VERSION_BUILD)" == "true" ]; then
-			PYAML_VERSION_GOOD="true"
-			echo "ruamel.yaml is up to date." >&2
-		else
-			echo "ruamel.yaml is outdated." >&2
-			if [ "$PYAML_VERSION" != "Unknown" ]; then
-				install_python3_and_deps "$PYTHON_VERSION_MAJOR.$PYTHON_VERSION_MINOR.$PYTHON_VERSION_BUILD" "$PYAML_VERSION_MAJOR.$PYAML_VERSION_MINOR.$PYAML_VERSION_BUILD"
-			else
-				install_python3_and_deps "$PYTHON_VERSION_MAJOR.$PYTHON_VERSION_MINOR.$PYTHON_VERSION_BUILD"
-			fi
-			return 1
-		fi
-		printf "Blessed Version: '$BLESSED_VERSION'. "
-		if [ "$(minimum_version_check $REQ_BLESSED_VERSION $BLESSED_VERSION_MAJOR $BLESSED_VERSION_MINOR $BLESSED_VERSION_BUILD)" == "true" ]; then
-			BLESSED_GOOD="true"
-			echo "Blessed is up to date." >&2
-		else
-			echo "Blessed is outdated." >&2
-			if [ "$BLESSED_VERSION" != "Unknown" ]; then
-				install_python3_and_deps "$PYTHON_VERSION_MAJOR.$PYTHON_VERSION_MINOR.$PYTHON_VERSION_BUILD" "$PYAML_VERSION_MAJOR.$PYAML_VERSION_MINOR.$PYAML_VERSION_BUILD"
-			else
-				install_python3_and_deps "$PYTHON_VERSION_MAJOR.$PYTHON_VERSION_MINOR.$PYTHON_VERSION_BUILD"
-			fi
+			echo "Python is outdated or virtualenv is missing" >&2
+			install_python3_and_deps "$PYTHON_VERSION_MAJOR.$PYTHON_VERSION_MINOR.$PYTHON_VERSION_BUILD" "$VIRTUALENV_GOOD"
 			return 1
 		fi
 	else
@@ -359,13 +311,7 @@ function do_env_checks() {
 	fi
 }
 
-# ----------------------------------------------
-# Menu bootstrap entry point
-# ----------------------------------------------
-
-if [[ "$*" == *"--no-check"* ]]; then
-	echo "Skipping preflight checks."
-else
+function do_checks() {
 	do_project_checks
 	do_env_checks
 	do_python3_checks
@@ -373,9 +319,7 @@ else
 	do_docker_checks
 
 	if [[ "$DOCKER_VERSION_GOOD" == "true" ]] && \
-		[[ "$PYTHON_VERSION_GOOD" == "true" ]] && \
-		[[ "$PYAML_VERSION_GOOD" == "true" ]] && \
-		[[ "$BLESSED_GOOD" == "true" ]]; then
+		[[ "$PYTHON_VERSION_GOOD" == "true" ]]; then
 		echo "Project dependencies up to date"
 		echo ""
 	else
@@ -384,14 +328,44 @@ else
 		echo "  rm .docker_notinstalled || rm .docker_outofdate || rm .project_outofdate"
 		echo ""
 	fi
-fi
+}
+
+function do_dotenv_defaults() {
+	ENV_FILE=.env
+	echo "Checking $ENV_FILE is setting IOTSTACK_UID and IOTSTACK_GID"
+	grep -qs '^IOTSTACK_UID=' $ENV_FILE || {
+		echo Adding missing definitions to $ENV_FILE using UID:GID=$(id --user):$(id --group)
+		cat >> $ENV_FILE <<- EOF
+		# Changing IOTSTACK_UID or IOTSTACK_GID after you have started the stack is not
+		# supported. File owners in the 'volumes'-folder won't automatically update to
+		# match, resulting in various problems. i.e. Do NOT change the next two lines.
+		IOTSTACK_UID=$(id --user)
+		EOF
+	}
+	grep -qs '^IOTSTACK_GID=' $ENV_FILE || {
+		echo "IOTSTACK_GID=$(id --group)" >> $ENV_FILE
+	}
+}
+
+function do_help() {
+	echo "USAGE:
+	$0 [OPTIONS...]"
+	echo $'OPTIONS:
+	--branch <name>     override branch to check for updates
+	                    (default: current branch)
+	--no-check          don\'t run any environment or git checks
+	--run-env-setup     try to make required user&group changes
+	--encoding <enc>    set encoding for menu'
+}
 
 while test $# -gt 0
 do
 	case "$1" in
 		--branch) CURRENT_BRANCH=${2:-$(git name-rev --name-only HEAD)}
 			;;
-		--no-check) echo ""
+		--no-check)
+			NO_CHECKS=true
+			echo "Skipping preflight checks."
 			;;
 		--run-env-setup) # Sudo cannot be run from inside functions.
 				echo "Setting up environment:"
@@ -411,11 +385,24 @@ do
 			;;
 		--encoding) ENCODING_TYPE=$2
 			;;
-		--*) echo "bad option $1"
+		--help)
+			do_help
+			exit 1
+			;;
+		--*)
+			echo "ERROR: unknown option: $1"
+			do_help
+			exit 1
 			;;
 	esac
 	shift
 done
+
+if [[ -z "$NO_CHECKS" ]]; then
+	do_checks
+fi
+
+do_dotenv_defaults
 
 # This section is temporary, it's just for notifying people of potential breaking changes.
 if [[ -f .new_install ]]; then
@@ -431,6 +418,20 @@ else
 		fi
 	fi
 	touch .new_install
+fi
+
+set -e # stop execution on failure
+if cmp -s requirements-menu.txt .virtualenv-menu/requirements.txt; then
+	echo "Using existing python virtualenv for menu"
+	source .virtualenv-menu/bin/activate
+else
+	rm -rf .virtualenv-menu
+	echo "Creating python virtualenv for menu..."
+	virtualenv -q --seed pip .virtualenv-menu
+	source .virtualenv-menu/bin/activate
+	echo "Installing menu requirements into the virtualenv..."
+	pip3 install -q -r requirements-menu.txt
+	cp requirements-menu.txt .virtualenv-menu/requirements.txt
 fi
 
 # Hand control to new menu
